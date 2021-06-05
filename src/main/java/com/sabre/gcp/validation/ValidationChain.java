@@ -9,6 +9,7 @@ import org.reflections.Reflections;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -58,7 +59,11 @@ public class ValidationChain<T> extends DoFn<T, WithErrors<T>> implements Serial
     @ProcessElement
     public void processElement(@Element T obj, OutputReceiver<WithErrors<T>> out) {
         List<String> errors = validators.stream()
-            .flatMap(validator -> validator.doValidation(obj).stream())
+            .flatMap(validator -> {
+                val validatorErrors = validator.doValidation(obj);
+                if (validatorErrors == null) return Stream.empty();
+                return validatorErrors.stream();
+            })
             .collect(toList());
         out.output(new WithErrors<>(errors, obj));
     }
