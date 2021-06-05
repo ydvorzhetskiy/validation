@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Validator {
 
-    String validationChainId() default "defaultChain";
+    String validationChainId();
 
-    Class<? extends BaseValidator<?>>[] validateAfter();
+    Class<? extends BaseValidator<?>>[] validateAfter() default {};
 
-    String[] validationFields();
+    String[] validationFields() default {};
 }
