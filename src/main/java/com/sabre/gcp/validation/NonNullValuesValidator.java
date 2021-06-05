@@ -8,7 +8,7 @@ import static java.util.stream.Collectors.toList;
 
 public abstract class NonNullValuesValidator<T> implements BaseValidator<T> {
 
-    private List<Field> fields;
+    private transient List<Field> fields;
 
     @Override
     public final List<String> doValidation(T object) {

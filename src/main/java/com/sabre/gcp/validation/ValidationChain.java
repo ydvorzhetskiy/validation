@@ -4,14 +4,15 @@ import lombok.val;
 import org.apache.beam.repackaged.core.org.apache.commons.lang3.ArrayUtils;
 import org.apache.beam.repackaged.core.org.apache.commons.lang3.StringUtils;
 import org.apache.beam.sdk.transforms.DoFn;
-import org.apache.beam.vendor.grpc.v1p26p0.org.bouncycastle.util.Arrays;
 import org.reflections.Reflections;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class ValidationChain<T> extends DoFn<T, WithErrors<T>> {
+import static java.util.stream.Collectors.toList;
+
+public class ValidationChain<T> extends DoFn<T, WithErrors<T>> implements Serializable {
 
     private final List<BaseValidator<T>> validators;
 
@@ -20,8 +21,7 @@ public class ValidationChain<T> extends DoFn<T, WithErrors<T>> {
     }
 
     static <T> ValidationChain<T> getInstance(
-        @SuppressWarnings("SameParameterValue")
-        String validationChainId,
+        @SuppressWarnings("SameParameterValue") String validationChainId,
         @SuppressWarnings({"unused", "SameParameterValue"}) Class<T> cl
     ) {
         Reflections reflections = new Reflections("com");
@@ -47,7 +47,7 @@ public class ValidationChain<T> extends DoFn<T, WithErrors<T>> {
                     throw new RuntimeException(e);
                 }
             })
-            .collect(Collectors.toList());
+            .collect(toList());
         return new ValidationChain<>(validators);
     }
 
@@ -55,14 +55,11 @@ public class ValidationChain<T> extends DoFn<T, WithErrors<T>> {
         return validators;
     }
 
-    //    public static ValidationChain validationChain(String chainName, Class<T> clazz, lambda) {
-//        return
-//    }
-
-
-//    @ProcessElement
-//    public void processElement(@Element Pnr pnr, OutputReceiver<TableRow> out) {
-//        val row = PnrConverter.toTableRow(pnr);
-//        out.output(row);
-//    }
+    @ProcessElement
+    public void processElement(@Element T obj, OutputReceiver<WithErrors<T>> out) {
+        List<String> errors = validators.stream()
+            .flatMap(validator -> validator.doValidation(obj).stream())
+            .collect(toList());
+        out.output(new WithErrors<>(errors, obj));
+    }
 }
