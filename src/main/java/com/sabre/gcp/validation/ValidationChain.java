@@ -20,7 +20,7 @@ public class ValidationChain<T> extends DoFn<T, WithErrors<T>> implements Serial
         this.validators = validators;
     }
 
-    static <T> ValidationChain<T> getInstance(
+    public static <T> ValidationChain<T> getInstance(
         @SuppressWarnings("SameParameterValue") String validationChainId,
         @SuppressWarnings({"unused", "SameParameterValue"}) Class<T> cl
     ) {

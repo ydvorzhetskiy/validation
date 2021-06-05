@@ -1,1 +1,1 @@
-mvn install:install-file -DgroupId=com.sabre.gcp -DartifactId=validation -Dversion=1.2 -Dfile=./target/validation-1.2.jar -Dpackaging=jar -DgeneratePom=false -DlocalRepositoryPath=. -DcreateChecksum=true -DpomFile=./pom.xml
+mvn install:install-file -DgroupId=com.sabre.gcp -DartifactId=validation -Dversion=1.3 -Dfile=./target/validation-1.3.jar -Dpackaging=jar -DgeneratePom=false -DlocalRepositoryPath=. -DcreateChecksum=true -DpomFile=./pom.xml
