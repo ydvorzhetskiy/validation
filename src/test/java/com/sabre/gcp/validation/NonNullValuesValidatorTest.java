@@ -28,7 +28,7 @@ public class NonNullValuesValidatorTest {
         obj.fieldExample = "Non-null value";
 
         NonNullValuesValidator<ClassExample> validator = new ExampleNonNullValidator();
-        assertTrue(validator.doValidation(obj));
+        assertTrue(validator.doValidation(obj).isEmpty());
     }
 
     @Test
@@ -37,6 +37,6 @@ public class NonNullValuesValidatorTest {
         assert obj.fieldExample == null;
 
         NonNullValuesValidator<ClassExample> validator = new ExampleNonNullValidator();
-        assertFalse(validator.doValidation(obj));
+        assertFalse(validator.doValidation(obj).isEmpty());
     }
 }
